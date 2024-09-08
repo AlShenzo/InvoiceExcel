@@ -38,6 +38,8 @@ for filepath in filepaths:
     # but we don't actually need it into a list
     # we can iterate it over index object
     columns = [item.replace('_', ' ').title() for item in columns]
+    # we replace the _ with space and capitalize first letter of each time
+    # for loop for do that for all 3 files
     pdf.set_font(family='Times', size=10, style='B')
     pdf.set_text_color(80, 80, 80)
     pdf.cell(w=30, h=8, txt=str(columns[0]), border=1)
@@ -57,5 +59,22 @@ for filepath in filepaths:
         pdf.cell(w=30, h=8, txt=str(row['total_price']), border=1, ln=1)
         # border =1 to add border
         # after the last cell we give space to the next row
+
+    # now we add 1 cell for sum of column, outside for loop
+    total_sum = df['total_price'].sum()
+    pdf.cell(w=30, h=8, txt='', border=1)  # empty strings to create empty cells
+    pdf.cell(w=60, h=8, txt='', border=1)
+    pdf.cell(w=40, h=8, txt='', border=1)
+    pdf.cell(w=30, h=8, txt='', border=1)
+    pdf.cell(w=30, h=8, txt=str(total_sum), border=1, ln=1)
+
+    # add total sum sentence
+    pdf.set_font(family='Times', size=10, style='B')
+    pdf.cell(w=30, h=8, txt=f'The total price is {total_sum}', ln=1)
+
+    # company logo
+    pdf.set_font(family='Times', size=10, style='B')
+    pdf.cell(w=25, h=8, txt=f'PythonHow')
+    pdf.image('pythonhow.png', w=10)
 
     pdf.output(f"PDFs/{filename}.pdf")
