@@ -8,8 +8,6 @@ filepaths = glob.glob('invoices/*.xlsx')
 
 
 for filepath in filepaths:
-    df = pd.read_excel(filepath, sheet_name='Sheet 1')
-    # we need to provide filepath for each filepath, and which sheet
 
     # we can create pdf file
     pdf = FPDF(orientation='p', unit='mm', format='A4')
@@ -29,6 +27,35 @@ for filepath in filepaths:
     pdf.cell(w=50, h=8, txt=f'Invoice nr.{invoice_nr}', ln=1)
     # ln=1 to create a break line
     pdf.set_font(family='Times', size=16, style='B')
-    pdf.cell(w=50, h=8, txt=f'Date: {date}')
+    pdf.cell(w=50, h=8, txt=f'Date: {date}', ln=1)
+
+    df = pd.read_excel(filepath, sheet_name='Sheet 1')
+    # we need to provide filepath for each filepath, and which sheet
+
+    # now add header
+    columns = df.columns
+    # panda reads the columns headers, and we convert into a list
+    # but we don't actually need it into a list
+    # we can iterate it over index object
+    columns = [item.replace('_', ' ').title() for item in columns]
+    pdf.set_font(family='Times', size=10, style='B')
+    pdf.set_text_color(80, 80, 80)
+    pdf.cell(w=30, h=8, txt=str(columns[0]), border=1)
+    pdf.cell(w=60, h=8, txt=str(columns[1]), border=1)
+    pdf.cell(w=40, h=8, txt=str(columns[2]), border=1)
+    pdf.cell(w=30, h=8, txt=str(columns[3]), border=1)
+    pdf.cell(w=30, h=8, txt=str(columns[4]), border=1, ln=1)
+
+    # add rows
+    for index, row in df.iterrows():
+        pdf.set_font(family='Times', size=10)
+        pdf.set_text_color(80, 80, 80)
+        pdf.cell(w=30, h=8, txt=str(row['product_id']), border=1)
+        pdf.cell(w=60, h=8, txt=str(row['product_name']), border=1)
+        pdf.cell(w=40, h=8, txt=str(row['amount_purchased']), border=1)
+        pdf.cell(w=30, h=8, txt=str(row['price_per_unit']), border=1)
+        pdf.cell(w=30, h=8, txt=str(row['total_price']), border=1, ln=1)
+        # border =1 to add border
+        # after the last cell we give space to the next row
 
     pdf.output(f"PDFs/{filename}.pdf")
